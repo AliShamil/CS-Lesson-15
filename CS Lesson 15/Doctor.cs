@@ -60,7 +60,8 @@ internal class Doctor
 
 
     public override string ToString()
-=> $@"Name: {Name}
+=> $@"
+Name: {Name}
 Surname: {Surname}
 Work Experience: {workExperiemce} years";
 }

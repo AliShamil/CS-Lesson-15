@@ -22,8 +22,7 @@ internal class Reception
 
     public override string ToString()
 => $@"Randevu Time: {RandevuTimeStart} - {RandevuTimeEnd}
+ Reservstion: {(ReservedPatient == null ? "No Reserv" : "Reserved")}";
 
-Reserved Patient: 
 
-{(ReservedPatient == null ? "EMPTY" : ReservedPatient)}";
 }

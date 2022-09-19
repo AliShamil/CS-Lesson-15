@@ -1,9 +1,14 @@
-﻿namespace CS_Lesson_15;
+﻿using System.ComponentModel;
+using System.Reflection.Metadata.Ecma335;
+
+namespace CS_Lesson_15;
 
 
 
 internal class Program
 {
+
+
     static void Main()
     {
 
@@ -64,10 +69,11 @@ internal class Program
             string phone = Console.ReadLine()!;
 
             Patient patient;
-            
+
             try
             {
                 patient = new(name, surname, email, phone);
+
             }
             catch (Exception ex)
             {
@@ -77,10 +83,13 @@ internal class Program
             }
 
 
-
+            clinic = false;
             while (!clinic)
             {
                 Console.Clear();
+                List<Doctor> doctors = null!;
+                Doctor currentDoc;
+                int row;
                 Console.Write(@"
 1. Pediatrics
 2. Traumatology
@@ -88,6 +97,105 @@ internal class Program
 0. Exit
 
 Pls select: ");
+
+                switch (Console.ReadLine())
+                {
+                    case "1":
+
+                        doctors = Pediatrics;
+
+                        break;
+
+                    case "2":
+                        doctors= Traumatology;
+                        break;
+
+                    case "3":
+                        doctors = Stomatology;
+                        break;
+
+                    case "0":
+                        Console.Clear();
+                        Console.WriteLine("GOOD BYE!");
+                        Environment.Exit(0);
+                        break;
+
+                    default:
+                        Console.Clear();
+                        Console.WriteLine("Unknown command !");
+                        Thread.Sleep(1500);
+                        break;
+                }
+
+                while (true)
+                {
+                    Console.Clear();
+                    row = 1;
+                    foreach (var doctor in doctors)
+                    {
+                        Console.WriteLine($"{row++}) {doctor}\n");
+                    }
+
+                    Console.Write("Pls select: ");
+
+                    try
+                    {
+                        if (!int.TryParse(Console.ReadLine(), out int result))
+                            throw new InvalidCastException("Invalid Choice!");
+                        if (result <= 0 || result > Pediatrics.Count)
+                            throw new IndexOutOfRangeException("Invalid Choice!");
+
+                        currentDoc = doctors[--result];
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Clear();
+                        Console.WriteLine(ex.Message);
+                        Thread.Sleep(1500);
+                        continue;
+                    }
+
+                    while (true)
+                    {
+                        Console.Clear();
+                        row = 1;
+                        foreach (var receptionTime in currentDoc.ReceptionTimes)
+                        {
+                            Console.WriteLine($"{row++}) {receptionTime}");
+                        }
+                        Console.Write("\nPls select: ");
+
+                        try
+                        {
+                            if (!int.TryParse(Console.ReadLine(), out int time))
+                                throw new InvalidCastException("Invalid Choice!");
+                            if (time <= 0 || time > currentDoc.ReceptionTimes.Count)
+                                throw new IndexOutOfRangeException("Invalid Choice!");
+
+
+                            if (currentDoc.ReceptionTimes[time - 1].ReservedPatient is not null)
+                                throw new ArgumentException("This Time is already reserved!");
+
+                            currentDoc.ReceptionTimes[time - 1].ReservedPatient = patient;
+                            Console.WriteLine($"{patient.Name} {patient.Surname},you signed up for doctor {currentDoc.Name} {currentDoc.Surname}'s appointment between {currentDoc.ReceptionTimes[time - 1].RandevuTimeStart} and {currentDoc.ReceptionTimes[time - 1].RandevuTimeEnd}.");
+                            clinic = true;
+                            Console.ReadKey(false);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.Clear();
+                            Console.WriteLine(ex.Message);
+                            Thread.Sleep(1500);
+                            continue;
+                        }
+                        break;
+                    }
+
+                    break;
+                }
+
+
             }
 
 
